@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/index.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <img src="../imgs/roids.jfif" alt="Product Image" width="300">
+    </div>
+
+    <form onsubmit="event.preventDefault(); upLoad();">
+        <label for="product_name">Product Name:</label>
+        <input type="text" id="product_name" name="product_name" required><br><br>
+
+        <label for="quantity_available">Quantity Available:</label>
+        <input type="text" id="quantity_available" name="quantity_available" required><br><br>
+
+        <label for="cost">Product Cost $:</label>
+        <input type="text" id="cost" name="cost" required><br><br>
+
+        <input type="submit" value="Upload">
+    </form>
+</body>
+</html>
