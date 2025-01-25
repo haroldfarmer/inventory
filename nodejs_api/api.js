@@ -35,8 +35,59 @@ app.get("/data/:productName", (req, res) => {
     });
 });
 
+app.post("/update", (req, res) => {
+  const { product_name, quantity_available, cost } = req.body;
+
+  // Validation: Ensure at least one field to update
+  if (!product_name && !quantity_available && !cost) {
+    return res.status(400).json({ error: "Need at least one column to update." });
+  }
+
+  // Validation: Ensure product_name is provided
+  if (!product_name) {
+    return res.status(400).json({ error: "Need to know what product to update." });
+  }
+
+  // Prepare query with placeholders for values to prevent SQL Injection
+  const query = `
+    UPDATE products
+    SET quantity_available = $1, cost = $2
+    WHERE product_name = $3
+    RETURNING *;
+  `;
+
+  // Run the query with the parameterized values
+  client
+    .query(query, [quantity_available, cost, product_name])
+    .then((result) => {
+      // Respond with the updated data
+      if (result.rows.length > 0) {
+        res.status(200).json({ message: "Data updated successfully", data: result.rows[0] });
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    })
+    .catch((err) => {
+      // Handle specific database errors
+      if (err.code === '23505') {
+        res.status(400).json({
+          success: false,
+          message: 'Product already exists!',
+          error: err.detail || err.message,
+        });
+      } else {
+        // Handle general errors
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error.',
+          error: err.message,
+        });
+      }
+    });
+});
+
+
 app.post("/insert", (req, res) => {
-  console.log(req.body);
   const { product_name, quantity_available, cost } = req.body || {};
 
   if (!product_name || !quantity_available || !cost) {
@@ -53,8 +104,20 @@ app.post("/insert", (req, res) => {
       res.status(201).json({ message: "Data Returned", data: result[0] });
     })
     .catch((err) => {
-      console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+
+      if (err.code === '23505') {
+        res.status(400).json({
+          success: false,
+          message: 'Product alread exist!',
+          error: err.detail || err.mesage,
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error.',
+          error: error.message,
+        });
+      }
     });
 });
 
