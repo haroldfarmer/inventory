@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
+    <a href="./upload_product.html">Upload Product</a>
     <div>
         <img src="../imgs/roids.jfif" alt="Product Image" width="300">
     </div>
@@ -25,6 +26,10 @@
     </form>
     <form onsubmit="event.preventDefault(); update();">
         <input type="submit" value="Update">
+    </form>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <button type="submit">Upload</button>
     </form>
 </body>
 </html>
