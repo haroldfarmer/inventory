@@ -1,9 +1,12 @@
 const { Client } = require("pg");
 const express = require("express");
+const multer = require('multer');
 const cors = require("cors");
 const app = express();
+const path = require('path');
 app.use(express.json());
 app.use(cors());
+app.use(express.static('front_end'));
 
 const client = new Client({
   user: "postgres",
@@ -84,6 +87,35 @@ app.post("/update", (req, res) => {
         });
       }
     });
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      // Specify the directory where the file should be uploaded
+      cb(null, '../imgs');
+  },
+  filename: (req, file, cb) => {
+      // Set the filename of the uploaded file (using the original name)
+      cb(null, file.originalname);
+  }
+});
+
+// Initialize the upload variable with the storage configuration
+const upload = multer({ storage: storage });
+
+// Create an upload route that only allows one file upload (you can change the limit if necessary)
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+      return res.status(400).send('No file uploaded.');
+  }
+  res.send({
+      message: 'File uploaded successfully!',
+      file: req.file
+  });
+  console.log({
+    message: 'File uploaded successfully!',
+    file: req.file
+  });
 });
 
 
