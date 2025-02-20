@@ -119,6 +119,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 });
 
 
+
 app.post("/insert", (req, res) => {
   const { product_name, quantity_available, cost } = req.body || {};
 
